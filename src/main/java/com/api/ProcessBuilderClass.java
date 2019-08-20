@@ -10,26 +10,22 @@ import java.io.InputStreamReader;
 
 public class ProcessBuilderClass {
     private static final Logger logger = LoggerFactory.getLogger(ProcessBuilderClass.class);
-    public void printMethod(String printerName, String content, String filePath, String fileName) throws IOException{
-        String command[] = {"javac", filePath+"\\"+fileName+".java"};
+    void printMethod(PrintRequest printRequest) throws IOException{
+        String command[] = {"javac", printRequest.getFilePath()+"\\"+printRequest.getFile()+".java"};
 
-        logger.info("Process file = "+ filePath+"\\"+fileName+".java");
+        logger.info("Process file = "+ printRequest.getFilePath()+"\\"+printRequest.getFile()+".java");
         ProcessBuilder processBuilder = new ProcessBuilder(command);
 
         Process process = processBuilder.start();
 
-        String content1 = "";
-        content1 = content1 +"       Barbeque Nation Pvt. Ltd.        "+System.getProperty("line.separator");
-        content = content1 +"--------------------------------------- "+System.getProperty("line.separator");
-
-       // content = content.replaceAll("\n", "\\\n");
         if( process.getErrorStream().read() != -1 ){
             print("Compilation Errors",process.getErrorStream());
         }
         if( process.exitValue() == 0 ){
-            logger.info("Commandline args = "+"\""+printerName+"\" \""+content+"\"");
+            logger.info("Commandline args = "+"\""+printRequest.getPrinterName()+"\" \""+printRequest.getPrintContent()+"\" \""+printRequest.getPaperCutCommand()+"\"");
 
-            process = new ProcessBuilder(new String[]{"java","-cp",filePath,fileName, "\""+printerName+"\" \""+content+"\""}).start();
+            process = new ProcessBuilder(new String[]{"java","-cp",printRequest.getFilePath(),
+                    printRequest.getFile(), "\""+printRequest.getPrinterName()+"\" \""+printRequest.getPrintContent()+"\" \""+printRequest.getPaperCutCommand()+"\""}).start();
 
             if( process.getErrorStream().read() != -1 ){
                 print("Errors ",process.getErrorStream());

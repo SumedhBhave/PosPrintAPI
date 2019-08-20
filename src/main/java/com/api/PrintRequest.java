@@ -5,6 +5,15 @@ public class PrintRequest {
     private String printerName;
     private String filePath;
     private String file;
+    private String paperCutCommand;
+
+    public String getPaperCutCommand() {
+        return paperCutCommand;
+    }
+
+    public void setPaperCutCommand(String paperCutCommand) {
+        this.paperCutCommand = paperCutCommand;
+    }
 
     public String getFilePath() {
         return filePath;
