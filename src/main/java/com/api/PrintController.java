@@ -18,8 +18,7 @@ public class PrintController {
 
         ProcessBuilderClass processBuilderClass = new ProcessBuilderClass();
         try {
-            processBuilderClass.printMethod(printRequest.getPrinterName(), printRequest.getPrintContent(),
-                    printRequest.getFilePath(), printRequest.getFile());
+            processBuilderClass.printMethod(printRequest);
         } catch (IOException e) {
             e.printStackTrace();
         }
