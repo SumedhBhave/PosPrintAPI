@@ -8,8 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -21,22 +19,6 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 
 public class PrinterService implements Printable {
-
-    public List<String> getPrinters() {
-
-        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-        PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
-
-        PrintService printServices[] = PrintServiceLookup.lookupPrintServices(
-                flavor, pras);
-
-        List<String> printerList = new ArrayList<String>();
-        for (PrintService printerService : printServices) {
-            printerList.add(printerService.getName());
-        }
-
-        return printerList;
-    }
 
     @Override
     public int print(Graphics g, PageFormat pf, int page)
@@ -59,47 +41,20 @@ public class PrinterService implements Printable {
         return PAGE_EXISTS;
     }
 
-    public void printString(String printerName, String text) {
 
-        // find the printService of name printerName
-        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-        PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
-
-        PrintService printService[] = PrintServiceLookup.lookupPrintServices(
-                flavor, pras);
-
-        System.out.println("Printer list: "+ getPrinters().toString());
-        System.out.println("Printing to printer name: "+ printerName);
-        if (printService != null && printService.length > 0) {
-            PrintService service = findPrintService(printerName, printService);
-
-            if (service != null) {
-                DocPrintJob job = service.createPrintJob();
-
-                try {
-
-                    byte[] bytes;
-
-                    // important for umlaut chars
-                    bytes = text.getBytes("CP437");
-
-                    Doc doc = new SimpleDoc(bytes, flavor, null);
-
-
-                    job.print(doc, null);
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    private static PrintService findPrintService(String printerName,
+                                                 PrintService[] services) {
+        for (PrintService service : services) {
+            if (service.getName().equalsIgnoreCase(printerName)) {
+                return service;
             }
-
         }
 
+        return null;
     }
 
-    public void printBytes(String printerName, byte[] bytes) {
-
+    static void printBytes(String printerName, String command) {
+        byte[] bytes = command.getBytes();
         DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
 
@@ -120,14 +75,42 @@ public class PrinterService implements Printable {
         }
     }
 
-    private PrintService findPrintService(String printerName,
-                                          PrintService[] services) {
-        for (PrintService service : services) {
-            if (service.getName().equalsIgnoreCase(printerName)) {
-                return service;
+    static void printString(PrintRequest printRequest) {
+
+        // find the printService of name printerName
+        DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+        PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
+
+        PrintService printService[] = PrintServiceLookup.lookupPrintServices(
+                flavor, pras);
+        System.out.println(printService.toString());
+
+        if (printService != null && printService.length > 0) {
+            PrintService service = findPrintService(printRequest.getPrinterName(), printService);
+
+            if (service != null) {
+                DocPrintJob job = service.createPrintJob();
+                System.out.println(printService.toString());
+                try {
+
+                    byte[] bytes;
+
+                    // important for umlaut chars
+                    bytes = printRequest.getPrintContent().getBytes("CP437");
+
+                    Doc doc = new SimpleDoc(bytes, flavor, null);
+
+
+                    job.print(doc, null);
+
+
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
+
         }
 
-        return null;
     }
 }

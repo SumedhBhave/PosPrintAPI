@@ -7,7 +7,7 @@ public class PrintRequest {
     private String file;
     private String paperCutCommand;
 
-    public String getPaperCutCommand() {
+    String getPaperCutCommand() {
         return paperCutCommand;
     }
 
@@ -15,7 +15,7 @@ public class PrintRequest {
         this.paperCutCommand = paperCutCommand;
     }
 
-    public String getFilePath() {
+    String getFilePath() {
         return filePath;
     }
 
@@ -23,7 +23,7 @@ public class PrintRequest {
         this.filePath = filePath;
     }
 
-    public String getFile() {
+    String getFile() {
         return file;
     }
 
@@ -31,7 +31,7 @@ public class PrintRequest {
         this.file = file;
     }
 
-    public String getPrinterName() {
+    String getPrinterName() {
         return printerName;
     }
 
@@ -39,7 +39,7 @@ public class PrintRequest {
         this.printerName = printerName;
     }
 
-    public String getPrintContent() {
+    String getPrintContent() {
         return printContent;
     }
 

@@ -14,14 +14,21 @@ public class PrintController {
     @RequestMapping(value = "/data", method = RequestMethod.POST)
     public
     @ResponseBody
-    String printService(@RequestBody PrintRequest printRequest){
+    String printService(@RequestBody PrintRequest printRequest) {
 
-        ProcessBuilderClass processBuilderClass = new ProcessBuilderClass();
-        try {
-            processBuilderClass.printMethod(printRequest);
-        } catch (IOException e) {
-            e.printStackTrace();
+        PrinterService.printString(printRequest);
+
+        if(printRequest.getPaperCutCommand() != null){
+            System.out.println("Actual Command:: " + printRequest.getPaperCutCommand());
+            String[] codes = printRequest.getPaperCutCommand().split(",");
+            String command = "";
+            for (int i = 0; i < codes.length; i++){
+                command += (char)(Integer.parseInt(codes[i]));
+            }
+            System.out.println("Converted Command:: " + command);
+            PrinterService.printBytes(printRequest.getPrinterName(),command);
         }
+
         return "ok";
     }
 }
